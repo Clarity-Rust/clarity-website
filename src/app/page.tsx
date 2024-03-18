@@ -1,9 +1,9 @@
 export default function Home() {
   return (
     <>
-    <div className="h-screen flex justify-center items-center">
-    CLARITY
-    </div>
+      <div className="flex h-screen items-center justify-center">
+        CLARITY - test deploy
+      </div>
     </>
   );
 }
