@@ -6,6 +6,9 @@ const CanvasComponent = () => {
   const [countdown, setCountdown] = useState("00:00:00");
   const leftAlign = 0.33;
   const baseOffset = 0.3;
+  var myFont = new FontFace("PressStart", "url(/PressStart2P-Regular.ttf)");
+  myFont.load().then(() => {});
+
   interface staticText {
     text: string;
     offX: number;
@@ -51,7 +54,7 @@ const CanvasComponent = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     const image = new Image();
-    image.src = "/rust_computer.jpg";
+    image.src = "/rust_computer_v2.png";
     image.onload = () => {
       drawCanvas();
     };
@@ -65,7 +68,7 @@ const CanvasComponent = () => {
         const textX = canvas.width * item.offX;
         const textY = canvas.height * item.offY;
         if (item.countdown) {
-          context.font = "60px Arial";
+          context.font = "60px 'PressStart'";
           item.text = item.text.split("").join(String.fromCharCode(8202));
         } else {
           context.font = "25px Arial";
