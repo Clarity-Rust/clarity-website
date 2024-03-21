@@ -43,7 +43,7 @@ const CanvasComponent = () => {
     },
     {
       text: countdown,
-      offX: leftAlign + 0.05,
+      offX: leftAlign + 0.035,
       offY: baseOffset + 0.305,
       color: "black",
       countdown: true,
@@ -91,12 +91,19 @@ const CanvasComponent = () => {
       canvas.height = window.innerHeight;
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
+      const spaceOut = (string: string) =>
+        string.split("").join(String.fromCharCode(8202));
+
       staticTexts.forEach((item) => {
         const textX = canvas.width * item.offX;
         const textY = canvas.height * item.offY;
-        context.font = item.countdown ? "60px 'Press Start 2P'" : "25px Arial";
+        context.font = item.countdown ? "60px 'PressStart'" : "23px PressStart";
         context.fillStyle = item.color;
-        context.fillText(item.countdown ? countdown : item.text, textX, textY);
+        context.fillText(
+          item.countdown ? spaceOut(countdown) : spaceOut(item.text),
+          textX,
+          textY,
+        );
       });
     };
 
@@ -110,7 +117,7 @@ const CanvasComponent = () => {
     };
   }, [countdown]);
 
-  return <canvas ref={canvasRef}></canvas>;
+  return <canvas ref={canvasRef} className="press-start"></canvas>;
 };
 
 export default CanvasComponent;
