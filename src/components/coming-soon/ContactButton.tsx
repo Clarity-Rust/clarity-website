@@ -15,14 +15,15 @@ export default function ContactButton({ variant }: { variant: string }) {
       <FaDiscord size={iconSize} color="white" />
     );
   const bgColor = variant === "discord" ? "bg-[#7289da]" : "bg-[#181D24]";
-  const textColor = variant === "steam" ? "text-white" : "text-black";
 
   return (
     <div
-      className={`flex gap-2 rounded-lg p-2 pr-4 text-md ${textColor} ${bgColor}`}
+      className={`text-md flex gap-2 rounded-full p-2 pr-4 text-white ${bgColor}`}
     >
       <span className="flex items-center align-text-bottom">{Icon}</span>
-      <Link href={buttonLink}>{buttonText}</Link>
+      <Link className="press-start" href={buttonLink}>
+        {buttonText}
+      </Link>
     </div>
   );
 }

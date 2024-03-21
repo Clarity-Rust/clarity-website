@@ -4,8 +4,8 @@ import ContactButton from "./coming-soon/ContactButton";
 
 const Navbar: React.FC = () => {
   return (
-    <div className="fixed top-0 left-0 w-full h-[8%] bg-black flex justify-between items-center px-4 z-50">
-      <div className="text-white font-bold">
+    <div className="fixed left-0 top-0 z-50 flex h-[8%] w-full items-center justify-between bg-neutral-800 px-4">
+      <div className="font-bold text-white">
         <Link href="https://clarityrust.gg/" className="flex gap-1">
           <Image
             src="/clarity-logo.svg"
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
       <nav className="text-white">
         <ul className="flex space-x-4">
           <li>
-            <ContactButton variant="discord"/>
+            <ContactButton variant="discord" />
           </li>
           <li>
             <ContactButton variant="steam" />

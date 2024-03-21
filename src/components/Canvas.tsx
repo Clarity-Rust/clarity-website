@@ -3,8 +3,8 @@ import React, { useRef, useEffect, useState } from "react";
 
 const CanvasComponent = () => {
   const canvasRef = useRef(null);
-  const targetDate = new Date("2024-04-05T13:00:00"); // Set your target date and time
-  const leftAlign = 0.33;
+  const targetDate = new Date("2024-04-05T13:00:00");
+  const leftAlign = 0.32;
   const baseOffset = 0.3;
 
   interface StaticText {
@@ -97,7 +97,7 @@ const CanvasComponent = () => {
       staticTexts.forEach((item) => {
         const textX = canvas.width * item.offX;
         const textY = canvas.height * item.offY;
-        context.font = item.countdown ? "60px 'PressStart'" : "23px PressStart";
+        context.font = item.countdown ? "33px 'PressStart'" : "15px PressStart";
         context.fillStyle = item.color;
         context.fillText(
           item.countdown ? spaceOut(countdown) : spaceOut(item.text),
@@ -117,7 +117,7 @@ const CanvasComponent = () => {
     };
   }, [countdown]);
 
-  return <canvas ref={canvasRef} className="press-start"></canvas>;
+  return <canvas ref={canvasRef}></canvas>;
 };
 
 export default CanvasComponent;
