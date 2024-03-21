@@ -6,8 +6,6 @@ const CanvasComponent = () => {
   const [countdown, setCountdown] = useState("00:00:00");
   const leftAlign = 0.33;
   const baseOffset = 0.3;
-  var myFont = new FontFace("PressStart", "url(/PressStart2P-Regular.ttf)");
-  myFont.load().then(() => {});
 
   interface staticText {
     text: string;
@@ -25,26 +23,26 @@ const CanvasComponent = () => {
     },
     {
       text: "WARHEAD STATUS: ARMED",
-      offX: leftAlign,
+      offX: leftAlign + 0.02,
       offY: baseOffset + 0.1,
       color: "red",
     },
     {
       text: "WARHEAD COUNT: 1/4",
-      offX: leftAlign,
+      offX: leftAlign + 0.02,
       offY: baseOffset + 0.15,
       color: "red",
     },
     {
       text: "CYCLE COMPLETION: STANDBY",
-      offX: leftAlign,
+      offX: leftAlign + 0.02,
       offY: baseOffset + 0.2,
       color: "red",
     },
     {
       text: countdown,
-      offX: leftAlign + 0.04,
-      offY: baseOffset + 0.33,
+      offX: leftAlign + 0.05,
+      offY: baseOffset + 0.305,
       color: "black",
       countdown: true,
     },
@@ -68,7 +66,7 @@ const CanvasComponent = () => {
         const textX = canvas.width * item.offX;
         const textY = canvas.height * item.offY;
         if (item.countdown) {
-          context.font = "60px 'PressStart'";
+          context.font = "60px 'Press Start 2P'";
           item.text = item.text.split("").join(String.fromCharCode(8202));
         } else {
           context.font = "25px Arial";

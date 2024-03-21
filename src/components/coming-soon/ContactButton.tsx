@@ -19,7 +19,7 @@ export default function ContactButton({ variant }: { variant: string }) {
 
   return (
     <div
-      className={`flex gap-2 rounded-lg p-2 pr-4 text-lg ${textColor} ${bgColor}`}
+      className={`flex gap-2 rounded-lg p-2 pr-4 text-md ${textColor} ${bgColor}`}
     >
       <span className="flex items-center align-text-bottom">{Icon}</span>
       <Link href={buttonLink}>{buttonText}</Link>
