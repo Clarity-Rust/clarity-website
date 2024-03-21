@@ -3,18 +3,20 @@ import React, { useRef, useEffect, useState } from "react";
 
 const CanvasComponent = () => {
   const canvasRef = useRef(null);
-  const [countdown, setCountdown] = useState("00:00:00");
+  const targetDate = new Date("2024-04-05T13:00:00"); // Set your target date and time
   const leftAlign = 0.33;
   const baseOffset = 0.3;
 
-  interface staticText {
+  interface StaticText {
     text: string;
     offX: number;
     offY: number;
     color: "black" | "red";
     countdown?: boolean;
   }
-  const staticTexts: staticText[] = [
+
+  const [countdown, setCountdown] = useState(".............");
+  const staticTexts: StaticText[] = [
     {
       text: "CLARITY RUST",
       offX: leftAlign + 0.1,
@@ -48,6 +50,33 @@ const CanvasComponent = () => {
     },
   ];
 
+  const padDigit = (n: number) => (n < 10 ? `0${n}` : n);
+
+  const calculateCountdown = () => {
+    const now = new Date();
+    const distance = targetDate.getTime() - now.getTime();
+    if (distance < 0) {
+      setCountdown("EXPIRED");
+      return;
+    }
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    setCountdown(
+      `${padDigit(days)}:${padDigit(hours)}:${padDigit(minutes)}:${padDigit(seconds)}`,
+    );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(calculateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -65,25 +94,21 @@ const CanvasComponent = () => {
       staticTexts.forEach((item) => {
         const textX = canvas.width * item.offX;
         const textY = canvas.height * item.offY;
-        if (item.countdown) {
-          context.font = "60px 'Press Start 2P'";
-          item.text = item.text.split("").join(String.fromCharCode(8202));
-        } else {
-          context.font = "25px Arial";
-        }
+        context.font = item.countdown ? "60px 'Press Start 2P'" : "25px Arial";
         context.fillStyle = item.color;
-        context.fillText(item.text, textX, textY);
+        context.fillText(item.countdown ? countdown : item.text, textX, textY);
       });
     };
 
     window.addEventListener("resize", drawCanvas);
+    // Redraw canvas every second to update countdown
+    const countdownInterval = setInterval(drawCanvas, 1000);
 
-    return () => window.removeEventListener("resize", drawCanvas);
+    return () => {
+      window.removeEventListener("resize", drawCanvas);
+      clearInterval(countdownInterval);
+    };
   }, [countdown]);
-
-  const updateCountdown = (newTime: string) => {
-    setCountdown(newTime);
-  };
 
   return <canvas ref={canvasRef}></canvas>;
 };
