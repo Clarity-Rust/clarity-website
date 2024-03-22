@@ -48,7 +48,7 @@ const Countdown = ({ color }: { color: string }) => {
   }
 
   return (
-    <div className={`text-${color} text-5xl rust-font`}>
+    <div className={`text-${color} text-4xl`}>
       <h1>
         {timeLeft.days} : {timeLeft.hours} : {timeLeft.minutes} :{" "}
         {timeLeft.seconds}
