@@ -6,7 +6,19 @@
 }
 
 .mobile {
-  display: block;
+  display: flex;
+  background: url("/mobile-background.png");
+  position: absolute;
+  top: 8%;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  color: black;
+  align-items: center;
+  justify-content: center;
+  gap: 6rem;
+  color: white;
 }
 
 .desktop {
@@ -21,4 +33,11 @@
   .desktop {
     display: block;
   }
+}
+
+.gradient {
+  font-weight: bold;
+  background: linear-gradient(to right, #0072ff, #d300d3);
+  background-clip: text;
+  color: transparent;
 }

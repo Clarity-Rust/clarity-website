@@ -129,7 +129,7 @@ const CanvasComponent = () => {
     };
   }, [countdown]);
 
-  return <canvas  ref={canvasRef}></canvas>;
+  return <canvas ref={canvasRef}></canvas>;
 };
 
 export default CanvasComponent;

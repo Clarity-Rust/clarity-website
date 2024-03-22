@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const Countdown = () => {
+const Countdown = ({ color }: { color: string }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
     hours: "00",
@@ -12,7 +12,7 @@ const Countdown = () => {
 
   const padDate = (unit: number) => (unit < 10 ? `0${unit}` : unit.toString());
 
-  const endDate = new Date("2024-03-31");
+  const endDate = new Date("2024-03-26T13:00:00");
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -21,7 +21,7 @@ const Countdown = () => {
 
       if (distance < 0) {
         setLoading(false);
-        return; // Stop the countdown when the end date is passed
+        return;
       }
 
       const days = padDate(Math.floor(distance / (1000 * 60 * 60 * 24)));
@@ -41,14 +41,14 @@ const Countdown = () => {
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);
-  }, []); // Removed `loading` from dependencies
+  }, []);
 
   if (loading) {
-    return <div>Loading countdown...</div>;
+    return <div className={`text-${color}`}>Loading countdown...</div>;
   }
 
   return (
-    <div className="text-black text-5xl">
+    <div className={`text-${color} text-5xl rust-font`}>
       <h1>
         {timeLeft.days} : {timeLeft.hours} : {timeLeft.minutes} :{" "}
         {timeLeft.seconds}

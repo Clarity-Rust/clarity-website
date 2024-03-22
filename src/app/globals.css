@@ -3,9 +3,21 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: "PressStart";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("/fonts/PressStart.ttf") format("truetype");
+  font-family: "PressStart";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/PressStart.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "RustFont";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/RustFont.ttf") format("truetype");
+}
+
+.rust-font {
+  font-family: "RustFont", sans-serif;
 }

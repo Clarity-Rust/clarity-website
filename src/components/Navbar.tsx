@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
         </Link>
       </div>
       <nav className="text-white">
-        <ul className="flex space-x-4">
+        <ul className="hidden md:flex space-x-4">
           <li>
             <ContactButton variant="discord" />
           </li>
