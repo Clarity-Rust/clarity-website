@@ -5,8 +5,8 @@ export default function ContactButton({ variant }: { variant: string }) {
   const iconSize = 25;
   const buttonLink =
     variant === "steam"
-      ? "https://steamcommunity.com/id/brandonmowat"
-      : "https://discord.com/invite/brandonmowat";
+      ? "https://steamcommunity.com/groups/clarityrust"
+      : "https://discord.gg/clarityrust";
   const buttonText = variant === "steam" ? "Steam" : "Discord";
   const Icon =
     variant === "steam" ? (

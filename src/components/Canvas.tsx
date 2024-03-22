@@ -1,52 +1,57 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 
+interface StaticText {
+  text: string;
+  offX: number;
+  offY: number;
+  fontSize: number;
+  color: "black" | "red";
+  countdown?: boolean;
+}
+
 const CanvasComponent = () => {
-  const canvasRef = useRef(null);
-  const targetDate = new Date("2024-04-05T13:00:00");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const targetDate = new Date("2024-03-26T13:00:00");
   const leftAlign = 0.32;
   const baseOffset = 0.3;
 
-  interface StaticText {
-    text: string;
-    offX: number;
-    offY: number;
-    color: "black" | "red";
-    countdown?: boolean;
-  }
-
-  const [countdown, setCountdown] = useState(".............");
+  const [countdown, setCountdown] = useState("................");
   const staticTexts: StaticText[] = [
     {
       text: "CLARITY RUST",
-      offX: leftAlign + 0.1,
+      offX: leftAlign + 0.07,
       offY: baseOffset,
       color: "black",
+      fontSize: 14,
+    },
+    // {
+    //   text: "s : ",
+    //   offX: leftAlign + 0.03,
+    //   offY: baseOffset + 0.12,
+    //   color: "red",
+    // },
+    {
+      text: "SPEED : MAX",
+      offX: leftAlign + 0.03,
+      offY: baseOffset + 0.17,
+      color: "red",
+      fontSize: 13,
     },
     {
-      text: "WARHEAD STATUS: ARMED",
-      offX: leftAlign + 0.02,
-      offY: baseOffset + 0.1,
+      text: "COMING : 3/26",
+      offX: leftAlign + 0.03,
+      offY: baseOffset + 0.22,
       color: "red",
-    },
-    {
-      text: "WARHEAD COUNT: 1/4",
-      offX: leftAlign + 0.02,
-      offY: baseOffset + 0.15,
-      color: "red",
-    },
-    {
-      text: "CYCLE COMPLETION: STANDBY",
-      offX: leftAlign + 0.02,
-      offY: baseOffset + 0.2,
-      color: "red",
+      fontSize: 13,
     },
     {
       text: countdown,
-      offX: leftAlign + 0.035,
+      offX: leftAlign + 0.032,
       offY: baseOffset + 0.305,
       color: "black",
       countdown: true,
+      fontSize: 21,
     },
   ];
 
@@ -56,19 +61,29 @@ const CanvasComponent = () => {
     const now = new Date();
     const distance = targetDate.getTime() - now.getTime();
     if (distance < 0) {
-      setCountdown("EXPIRED");
+      setCountdown("LAUNCHING");
       return;
     }
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
-      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     setCountdown(
-      `${padDigit(days)}:${padDigit(hours)}:${padDigit(minutes)}:${padDigit(seconds)}`,
+      `${padDigit(days)}:${padDigit(hours)}:${padDigit(minutes)}:${padDigit(
+        seconds
+      )}`
     );
+  };
+
+  const calculateFontSize = (baseSize: number, canvasWidth: number) => {
+    const thresholdWidth = 768;
+    if (canvasWidth > thresholdWidth) {
+      return Math.max(12, baseSize * (canvasWidth / thresholdWidth));
+    }
+    return baseSize;
   };
 
   useEffect(() => {
@@ -78,8 +93,8 @@ const CanvasComponent = () => {
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
+    const canvas = canvasRef!.current;
+    const context = canvas!.getContext("2d");
     const image = new Image();
     image.src = "/rust_computer_v2.png";
     image.onload = () => {
@@ -87,28 +102,32 @@ const CanvasComponent = () => {
     };
 
     const drawCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const canvasWidth = window.innerWidth;
+      const canvasHeight = window.innerHeight;
+      canvas!.width = canvasWidth;
+      canvas!.height = canvasHeight;
+      context!.drawImage(image, 0, 0, canvasWidth, canvasHeight);
 
       const spaceOut = (string: string) =>
         string.split("").join(String.fromCharCode(8202));
 
       staticTexts.forEach((item) => {
-        const textX = canvas.width * item.offX;
-        const textY = canvas.height * item.offY;
-        context.font = item.countdown ? "33px 'PressStart'" : "15px PressStart";
-        context.fillStyle = item.color;
-        context.fillText(
+        const textX = canvasWidth * item.offX;
+        const textY = canvasHeight * item.offY;
+        const fontSize = item.fontSize
+          ? calculateFontSize(item.fontSize, canvasWidth)
+          : 19;
+        context!.font = `${fontSize}px PressStart`;
+        context!.fillStyle = item.color;
+        context!.fillText(
           item.countdown ? spaceOut(countdown) : spaceOut(item.text),
           textX,
-          textY,
+          textY
         );
       });
     };
 
     window.addEventListener("resize", drawCanvas);
-    // Redraw canvas every second to update countdown
     const countdownInterval = setInterval(drawCanvas, 1000);
 
     return () => {
