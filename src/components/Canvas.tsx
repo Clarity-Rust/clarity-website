@@ -1,12 +1,11 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
-import styles from "./canvas.module.css";
 
 interface StaticText {
   text: string;
   offX: number;
   offY: number;
-  fontSize?: number;
+  fontSize: number;
   color: "black" | "red";
   countdown?: boolean;
 }
@@ -24,7 +23,7 @@ const CanvasComponent = () => {
       offX: leftAlign + 0.07,
       offY: baseOffset,
       color: "black",
-      fontSize: 22,
+      fontSize: 14,
     },
     // {
     //   text: "s : ",
@@ -37,19 +36,22 @@ const CanvasComponent = () => {
       offX: leftAlign + 0.03,
       offY: baseOffset + 0.17,
       color: "red",
+      fontSize: 13,
     },
     {
       text: "COMING : 3/26",
       offX: leftAlign + 0.03,
       offY: baseOffset + 0.22,
       color: "red",
+      fontSize: 13,
     },
     {
       text: countdown,
-      offX: leftAlign + 0.035,
+      offX: leftAlign + 0.032,
       offY: baseOffset + 0.305,
       color: "black",
       countdown: true,
+      fontSize: 21,
     },
   ];
 
@@ -76,6 +78,14 @@ const CanvasComponent = () => {
     );
   };
 
+  const calculateFontSize = (baseSize: number, canvasWidth: number) => {
+    const thresholdWidth = 768;
+    if (canvasWidth > thresholdWidth) {
+      return Math.max(12, baseSize * (canvasWidth / thresholdWidth));
+    }
+    return baseSize;
+  };
+
   useEffect(() => {
     const interval = setInterval(calculateCountdown, 1000);
 
@@ -92,25 +102,22 @@ const CanvasComponent = () => {
     };
 
     const drawCanvas = () => {
-      canvas!.width = window.innerWidth;
-      canvas!.height = window.innerHeight;
-      context!.drawImage(image, 0, 0, canvas!.width, canvas!.height);
+      const canvasWidth = window.innerWidth;
+      const canvasHeight = window.innerHeight;
+      canvas!.width = canvasWidth;
+      canvas!.height = canvasHeight;
+      context!.drawImage(image, 0, 0, canvasWidth, canvasHeight);
 
       const spaceOut = (string: string) =>
         string.split("").join(String.fromCharCode(8202));
 
       staticTexts.forEach((item) => {
-        const textX = canvas!.width * item.offX;
-        const textY = canvas!.height * item.offY;
-        if (item.countdown) {
-          context!.font = "33px PressStart";
-        } else {
-          if (item.fontSize) {
-            context!.font = `${item.fontSize}px PressStart`;
-          } else {
-            context!.font = "19px PressStart";
-          }
-        }
+        const textX = canvasWidth * item.offX;
+        const textY = canvasHeight * item.offY;
+        const fontSize = item.fontSize
+          ? calculateFontSize(item.fontSize, canvasWidth)
+          : 19;
+        context!.font = `${fontSize}px PressStart`;
         context!.fillStyle = item.color;
         context!.fillText(
           item.countdown ? spaceOut(countdown) : spaceOut(item.text),
