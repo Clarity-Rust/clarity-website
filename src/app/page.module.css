@@ -9,15 +9,15 @@
   display: flex;
   background: url("/mobile-background.png");
   position: absolute;
-  top: 8%;
+  top: 7%;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 93vh;
   flex-direction: column;
   color: black;
   align-items: center;
   justify-content: center;
-  gap: 6rem;
+  gap: 3rem;
   color: white;
 }
 
