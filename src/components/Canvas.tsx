@@ -12,7 +12,7 @@ interface StaticText {
 
 const CanvasComponent = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const targetDate = new Date("2024-03-26T13:00:00");
+  const targetDate = new Date("2024-03-27T15:00:00");
   const leftAlign = 0.32;
   const baseOffset = 0.3;
 

@@ -12,7 +12,7 @@ const Countdown = ({ color }: { color: string }) => {
 
   const padDate = (unit: number) => (unit < 10 ? `0${unit}` : unit.toString());
 
-  const endDate = new Date("2024-03-26T13:00:00");
+  const endDate = new Date("2024-03-27T15:00:00");
 
   useEffect(() => {
     const updateCountdown = () => {
