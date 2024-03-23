@@ -39,7 +39,7 @@ const CanvasComponent = () => {
       fontSize: 13,
     },
     {
-      text: "COMING : 3/26",
+      text: "COMING : 3/27",
       offX: leftAlign + 0.03,
       offY: baseOffset + 0.22,
       color: "red",
