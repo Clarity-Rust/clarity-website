@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import AccountInfo from "./store/Account";
 import ContactButton from "./coming-soon/ContactButton";
 
 const Navbar: React.FC = () => {
   return (
-    <div className="fixed left-0 top-0 z-50 flex h-[8%] w-full items-center justify-between bg-neutral-800 px-4">
+    <div className="w-full items-center justify-between bg-neutral-800 px-4 flex">
       <div className="font-bold text-white">
         <Link href="https://clarityrust.gg/" className="flex gap-1">
           <Image
@@ -28,6 +29,19 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <ContactButton variant="steam" />
+          </li>
+          <li>
+            <Link href="/store">Store</Link>
+          </li>
+          <li>
+            <Link href="/faq">faq</Link>
+          </li>
+          <li>
+            <Link href="/Staff">Staff</Link>
+          </li>
+          <li>
+            <AccountInfo />
+            {/* api call to get basket status and check for valid username */}
           </li>
         </ul>
       </nav>
