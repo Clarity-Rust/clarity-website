@@ -182,9 +182,12 @@ export async function logIn(): Promise<void> {
 }
 
 export async function authedBasket(): Promise<boolean | User> {
-  if (!cookies().has("basketIdent")) {
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  if (!cookies().has("basketIdent") || cookies().get("basketIdent")?.value == "") {
     return false;
   }
+  console.log("the cookie exists somehow");
+  console.log(cookies().get("basketIdent"));
   const basketIdent = cookies().get("basketIdent")?.value;
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
 
@@ -194,9 +197,9 @@ export async function authedBasket(): Promise<boolean | User> {
   };
   const res = await fetch(url, options);
 
-  // if (!res.ok) {
-  //   throw new Error(`Error: ${res.statusText}`);
-  // }
+  if (!res.ok) {
+    throw new Error(`Error: ${res.statusText}`);
+  }
   const json = await res.json();
 
   if (json.data.username === null) {
@@ -217,12 +220,12 @@ export async function logOut(): Promise<void> {
   cookies().delete("basketIdent");
 
   // wait
-  await new Promise((resolve) => setTimeout(resolve, 5500));
+  await new Promise((resolve) => setTimeout(resolve, 250));
   // delete basket
   // do we need to?
 
   // redirect back
-  redirect("/store", RedirectType.replace);
+  redirect("/store", RedirectType.push);
 }
 
 export async function getCheckoutLink(): Promise<string> {
