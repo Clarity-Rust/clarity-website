@@ -79,30 +79,11 @@ export async function getBasket(): Promise<Basket> {
 }
 
 export async function createBasket(): Promise<Basket> {
-  const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets`;
-  const res = await fetch(url, { method: "POST", headers: baseHeader });
+  const res = await fetch("http://localhost:3000/api/createbasket", {
+    method: "GET",
+  });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.statusText}`);
-  }
-
-  const json = await res.json();
-
-  const basket = {
-    id: json.data.ident,
-    username: json.data.username,
-    price: json.data.total_price,
-    ip: json.data.ip,
-    checkoutURL: "",
-  };
-
-  // set basketIdent as cookie if it does not exist
-  if (
-    !cookies().has("basketIdent") ||
-    cookies().get("basketIdent")?.value === ""
-  ) {
-    cookies().set("basketIdent", basket.id, { secure: true });
-  }
+  const basket: Basket = await res.json();
 
   return basket;
 }
@@ -110,16 +91,23 @@ export async function createBasket(): Promise<Basket> {
 export async function getBasketAuth(
   returnURL: string = "https://clarityrust.gg/store/"
 ): Promise<string> {
+  if (
+    !cookies().has("basketIdent") ||
+    cookies().get("basketIdent")?.value === ""
+  ) {
+    const basket = await createBasket();
+  }
   const basketIdent = cookies().get("basketIdent")?.value;
   const encodedURL = encodeURIComponent(returnURL);
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}/auth?returnUrl=${encodedURL}`;
   const res = await fetch(url, { method: "GET", headers: baseHeader });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.statusText}`);
-  }
+  // if (!res.ok) {
+  //   throw new Error(`Error: ${res.statusText}`);
+  // }
 
   const json = await res.json();
+  console.log(json);
   return json[0].url;
 }
 
@@ -128,19 +116,12 @@ export async function addPackage(formData: FormData): Promise<boolean> {
     !cookies().has("basketIdent") ||
     cookies().get("basketIdent")?.value === ""
   ) {
-    // create basket
     const basket = await createBasket();
-    // retrieve auth url
     const authURL = await getBasketAuth();
-    // redirect to auth
     redirect(authURL, RedirectType.replace);
     return false;
   }
   const basketIdent = cookies().get("basketIdent")?.value;
-  if ((await authedBasket()) === false) {
-    const authURL = await getBasketAuth();
-    redirect(authURL, RedirectType.replace);
-  }
   const pkgId = formData.get("pkgId");
 
   const url = `${baseURL}/api/baskets/${basketIdent}/packages`;
@@ -155,8 +136,6 @@ export async function addPackage(formData: FormData): Promise<boolean> {
   if (!res.ok) {
     throw new Error(`error: ${res.statusText}}`);
   }
-  const json = await res.json();
-
   return true;
 }
 
@@ -178,7 +157,7 @@ export async function removePackage(
   return true;
 }
 
-export async function logIn(): Promise<void> {
+export async function logIn(): Promise<string> {
   if (
     !cookies().has("basketIdent") ||
     cookies().get("basketIdent")?.value === ""
@@ -187,19 +166,18 @@ export async function logIn(): Promise<void> {
   }
   const authURL = await getBasketAuth();
 
-  redirect(authURL, RedirectType.replace);
+  return authURL;
 }
 
-export async function authedBasket(): Promise<boolean | User> {
-  await new Promise((resolve) => setTimeout(resolve, 250));
+export async function authedBasket(): Promise<string | User> {
   if (
     !cookies().has("basketIdent") ||
     cookies().get("basketIdent")?.value == ""
   ) {
-    return false;
+    const basket = await createBasket();
+    const authUrl = await getBasketAuth();
+    return authUrl;
   }
-  console.log("the cookie exists somehow");
-  console.log(cookies().get("basketIdent"));
   const basketIdent = cookies().get("basketIdent")?.value;
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
 
@@ -215,7 +193,7 @@ export async function authedBasket(): Promise<boolean | User> {
   const json = await res.json();
 
   if (json.data.username === null) {
-    return false;
+    return await getBasketAuth();
   } else {
     const user: User = {
       name: json.data.username,
@@ -229,7 +207,7 @@ export async function authedBasket(): Promise<boolean | User> {
 
 export async function logOut(): Promise<void> {
   // clear cookie
-  cookies().delete("basketIdent");
+  cookies().set("basketIdent", "");
 
   // wait
   await new Promise((resolve) => setTimeout(resolve, 250));
@@ -242,7 +220,6 @@ export async function logOut(): Promise<void> {
 
 export async function getCheckoutLink(): Promise<string> {
   const basket = await getBasket();
-  console.log(basket);
   return basket.checkoutURL;
 }
 

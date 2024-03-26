@@ -1,12 +1,9 @@
 import { authedBasket, logOut, logIn } from "@/lib/Actions";
 import { User } from "../../../types";
+import Link from "next/link";
 
-function LogIn() {
-  return (
-    <form action={logIn}>
-      <button type="submit">Log in</button>
-    </form>
-  );
+function LogIn({ link }: { link: string }) {
+  return <Link href={link}>Log in</Link>;
 }
 
 function LogOut() {
@@ -27,16 +24,14 @@ function LoggedIn({ name }: { name: string }) {
 }
 
 export default async function AccountInfo() {
-  const userInfo: User | boolean = await authedBasket();
+  const userInfo: User | string = await authedBasket();
 
   return (
     <div>
-      {typeof userInfo === "boolean" && userInfo === false ? (
-        <LogIn />
-      ) : typeof userInfo === "object" && userInfo !== null ? (
-        <LoggedIn name={userInfo.name} />
+      {typeof userInfo === "string" ? (
+        <LogIn link={userInfo} />
       ) : (
-        "Unknown user"
+        <LoggedIn name={userInfo.name} />
       )}
     </div>
   );
