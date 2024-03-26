@@ -97,7 +97,10 @@ export async function createBasket(): Promise<Basket> {
   };
 
   // set basketIdent as cookie if it does not exist
-  if (!cookies().has("basketIdent")) {
+  if (
+    !cookies().has("basketIdent") ||
+    cookies().get("basketIdent")?.value === ""
+  ) {
     cookies().set("basketIdent", basket.id, { secure: true });
   }
 
@@ -121,7 +124,10 @@ export async function getBasketAuth(
 }
 
 export async function addPackage(formData: FormData): Promise<boolean> {
-  if (!cookies().has("basketIdent")) {
+  if (
+    !cookies().has("basketIdent") ||
+    cookies().get("basketIdent")?.value === ""
+  ) {
     // create basket
     const basket = await createBasket();
     // retrieve auth url
@@ -173,7 +179,10 @@ export async function removePackage(
 }
 
 export async function logIn(): Promise<void> {
-  if (!cookies().has("basketIdent")) {
+  if (
+    !cookies().has("basketIdent") ||
+    cookies().get("basketIdent")?.value === ""
+  ) {
     const basket = await createBasket();
   }
   const authURL = await getBasketAuth();
@@ -183,7 +192,10 @@ export async function logIn(): Promise<void> {
 
 export async function authedBasket(): Promise<boolean | User> {
   await new Promise((resolve) => setTimeout(resolve, 250));
-  if (!cookies().has("basketIdent") || cookies().get("basketIdent")?.value == "") {
+  if (
+    !cookies().has("basketIdent") ||
+    cookies().get("basketIdent")?.value == ""
+  ) {
     return false;
   }
   console.log("the cookie exists somehow");
