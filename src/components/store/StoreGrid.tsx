@@ -1,13 +1,14 @@
-import { Package } from "../../../types";
+import { Category, Package } from "../../../types";
 import Item from "./SmallPkg";
-import { getPackagesInCategory } from "@/lib/Actions";
+import {getAllPackages} from "@/lib/Actions";
 
 export default async function StoreGrid() {
-  const data: Package[] = await getPackagesInCategory("2639946");
+  const data: Package[] = await getAllPackages();
+
   return (
-    <div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {data.map((pkg: Package) => (
-        <Item pkg={pkg} />
+        <Item key={pkg.id} pkg={pkg} />
       ))}
     </div>
   );

@@ -1,6 +1,8 @@
 import { Package } from "../../../types";
+import { FaShoppingCart } from "react-icons/fa";
 
-export default function Item({pkg}: {pkg: Package}) {
+export default function Item({ pkg }: { pkg: Package }) {
+  
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <img
@@ -10,14 +12,19 @@ export default function Item({pkg}: {pkg: Package}) {
       />
       <div className="p-4">
         <h3 className="font-semibold text-lg text-gray-800">{pkg.name}</h3>
-        <p className="text-gray-600">Price: {pkg.price}</p>
-        <p className="text-gray-600">Type: {pkg.type}</p>
-        {/* <div className="mt-4">
+        <p className="text-gray-600">{"$" + pkg.price}</p>
+        <div className="mt-4">
           <h4 className="font-semibold text-gray-700">
             Category: {pkg.category.name}
           </h4>
-          <p className="text-sm text-gray-600">{pkg.category.desc}</p>
-        </div> */}
+        </div>
+        <button
+          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex gap-2"
+        >
+          <span>
+            <FaShoppingCart/>
+          </span>Add to Cart
+        </button>
       </div>
     </div>
   );

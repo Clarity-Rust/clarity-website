@@ -1,8 +1,7 @@
-type pkgType = "subscription" | "other-look up later";
 export interface Category {
   name: string;
   id: string;
-  desc: string;
+  desc?: string;
 }
 export interface Package {
   id: string;
@@ -10,15 +9,21 @@ export interface Package {
   name: string;
   imageURL: string;
   price: string;
-  type?: pkgType;
-  category?: Category;
+  category: Category;
+  discount?: string;
+  tax?: string;
 }
 
 export interface Basket {
-  packages: Package[];
+  packages?: string[];
   id: string;
   checkoutURL: string;
   username: string;
   price: number;
   ip: string;
+}
+
+export interface User {
+  name: string;
+  id: string;
 }
