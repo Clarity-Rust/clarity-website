@@ -52,7 +52,8 @@ export async function getAllPackages(): Promise<Package[]> {
   });
 }
 
-export async function getBasket(basketIdent: string): Promise<Basket> {
+export async function getBasket(): Promise<Basket> {
+  const basketIdent = cookies().get("basketIdent")?.value;
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
   const response = await fetch(url, { method: "GET", headers: baseHeader });
 
@@ -185,7 +186,6 @@ export async function authedBasket(): Promise<boolean | User> {
     return false;
   }
   const basketIdent = cookies().get("basketIdent")?.value;
-  console.log(basketIdent);
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
 
   const options: FetchOptions = {
@@ -198,7 +198,6 @@ export async function authedBasket(): Promise<boolean | User> {
   //   throw new Error(`Error: ${res.statusText}`);
   // }
   const json = await res.json();
-  console.log(json);
 
   if (json.data.username === null) {
     return false;
@@ -224,4 +223,37 @@ export async function logOut(): Promise<void> {
 
   // redirect back
   redirect("/store", RedirectType.replace);
+}
+
+export async function getCheckoutLink(): Promise<string> {
+  const basket = await getBasket();
+  console.log(basket);
+  return basket.checkoutURL;
+}
+
+export async function getPackage(id: string): Promise<Package> {
+  const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/packages/${id}`;
+  const res = await fetch(url, { method: "GET", headers: baseHeader });
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.statusText}`);
+  }
+
+  const json = await res.json();
+
+  const pkg: Package = {
+    id: json.data.id,
+    innerhtml: json.data.description,
+    name: json.data.name,
+    imageURL: json.data.image,
+    price: json.data.total_price,
+    category: {
+      name: json.data.category.name,
+      id: json.data.category.id,
+    },
+    discount: undefined,
+    tax: undefined,
+  };
+
+  return pkg;
 }
