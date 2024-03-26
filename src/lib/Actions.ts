@@ -185,6 +185,7 @@ export async function authedBasket(): Promise<boolean | User> {
     return false;
   }
   const basketIdent = cookies().get("basketIdent")?.value;
+  console.log(basketIdent);
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
 
   const options: FetchOptions = {
@@ -216,9 +217,11 @@ export async function logOut(): Promise<void> {
   // clear cookie
   cookies().delete("basketIdent");
 
+  // wait
+  await new Promise((resolve) => setTimeout(resolve, 5500));
   // delete basket
   // do we need to?
 
   // redirect back
-  redirect("/", RedirectType.replace);
+  redirect("/store", RedirectType.replace);
 }
