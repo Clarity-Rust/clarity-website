@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from "next/navigation";
 import { Basket, Category, User } from "../../types";
 import { Package } from "../../types";
 import { cookies } from "next/headers";
@@ -94,16 +95,18 @@ export async function createBasket(): Promise<Basket> {
     checkoutURL: "",
   };
 
-  // set basketIdent as cookie
-  cookies().set("basketIdent", basket.id, {secure: true});
+  // set basketIdent as cookie if it does not exist
+  if (!cookies().has("basketIdent")) {
+    cookies().set("basketIdent", basket.id, { secure: true });
+  }
 
   return basket;
 }
 
 export async function getBasketAuth(
-  basketIdent: string,
   returnURL: string = "https://clarityrust.gg/store/"
 ): Promise<string> {
+  const basketIdent = cookies().get("basketIdent")?.value;
   const encodedURL = encodeURIComponent(returnURL);
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}/auth?returnUrl=${encodedURL}`;
   const res = await fetch(url, { method: "GET", headers: baseHeader });
@@ -116,21 +119,32 @@ export async function getBasketAuth(
   return json[0].url;
 }
 
-export async function addPackage(
-  basketIdent: string,
-  pkgId: string
-): Promise<boolean> {
+export async function addPackage(formData: FormData): Promise<boolean> {
+  if (!cookies().has("basketIdent")) {
+    console.log("add package ran");
+    // create basket
+    const basket = await createBasket();
+    // retrieve auth url
+    const authURL = await getBasketAuth();
+    // redirect to auth
+    redirect(authURL);
+    return false;
+  }
+  const basketIdent = cookies().get("basketIdent")?.value;
+  if ((await authedBasket()) === false) {
+    const authURL = await getBasketAuth(); 
+    redirect(authURL);
+  }
+  const pkgId = formData.get("pkgId");
+
   const url = `${baseURL}/api/baskets/${basketIdent}/packages`;
   const options: FetchOptions = {
     method: "POST",
     headers: { ...baseHeader, "Content-Type": "application/json" },
     body: JSON.stringify({ package_id: pkgId }),
   };
-  const res = await fetch(url, options);
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.statusText}`);
-  }
+  console.log(pkgId);
 
   return true;
 }
@@ -154,9 +168,9 @@ export async function removePackage(
   return true;
 }
 
-export async function authedBasket(
-  basketIdent: string
-): Promise<Boolean | User> {
+export async function authedBasket(): Promise<Boolean | User> {
+  const basketIdent = cookies().get("basketIdent")?.value;
+  console.log(basketIdent);
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
 
   const options: FetchOptions = {
@@ -165,9 +179,9 @@ export async function authedBasket(
   };
   const res = await fetch(url, options);
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.statusText}`);
-  }
+  // if (!res.ok) {
+  //   throw new Error(`Error: ${res.statusText}`);
+  // }
   const json = await res.json();
   console.log(json);
 

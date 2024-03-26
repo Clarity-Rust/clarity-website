@@ -1,5 +1,6 @@
 import { Package } from "../../../types";
 import { FaShoppingCart } from "react-icons/fa";
+import { addPackage } from "@/lib/Actions";
 
 export default function Item({ pkg }: { pkg: Package }) {
   
@@ -18,13 +19,16 @@ export default function Item({ pkg }: { pkg: Package }) {
             Category: {pkg.category.name}
           </h4>
         </div>
-        <button
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex gap-2"
-        >
-          <span>
-            <FaShoppingCart/>
-          </span>Add to Cart
-        </button>
+        <form action={addPackage} method="post">
+          <input type="hidden" name="pkgId" value={pkg.id} />
+          <button
+            type="submit"
+            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+          >
+            <FaShoppingCart />
+            Add to Cart
+          </button>
+        </form>
       </div>
     </div>
   );
