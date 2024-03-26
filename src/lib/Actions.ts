@@ -1,5 +1,5 @@
 "use server";
-import { redirect } from "next/navigation";
+import { RedirectType, redirect } from "next/navigation";
 import { Basket, Category, User } from "../../types";
 import { Package } from "../../types";
 import { cookies } from "next/headers";
@@ -121,19 +121,18 @@ export async function getBasketAuth(
 
 export async function addPackage(formData: FormData): Promise<boolean> {
   if (!cookies().has("basketIdent")) {
-    console.log("add package ran");
     // create basket
     const basket = await createBasket();
     // retrieve auth url
     const authURL = await getBasketAuth();
     // redirect to auth
-    redirect(authURL);
+    redirect(authURL, RedirectType.replace);
     return false;
   }
   const basketIdent = cookies().get("basketIdent")?.value;
   if ((await authedBasket()) === false) {
-    const authURL = await getBasketAuth(); 
-    redirect(authURL);
+    const authURL = await getBasketAuth();
+    redirect(authURL, RedirectType.replace);
   }
   const pkgId = formData.get("pkgId");
 
@@ -144,7 +143,12 @@ export async function addPackage(formData: FormData): Promise<boolean> {
     body: JSON.stringify({ package_id: pkgId }),
   };
 
-  console.log(pkgId);
+  const res = await fetch(url, options);
+
+  if (!res.ok) {
+    throw new Error(`error: ${res.statusText}}`);
+  }
+  const json = await res.json();
 
   return true;
 }
@@ -160,7 +164,6 @@ export async function removePackage(
     body: JSON.stringify({ package_id: pkgId }),
   };
   const res = await fetch(url, options);
-
   if (!res.ok) {
     throw new Error(`Error: ${res.statusText}`);
   }
@@ -168,9 +171,20 @@ export async function removePackage(
   return true;
 }
 
-export async function authedBasket(): Promise<Boolean | User> {
+export async function logIn(): Promise<void> {
+  if (!cookies().has("basketIdent")) {
+    const basket = await createBasket();
+  }
+  const authURL = await getBasketAuth();
+
+  redirect(authURL, RedirectType.replace);
+}
+
+export async function authedBasket(): Promise<boolean | User> {
+  if (!cookies().has("basketIdent")) {
+    return false;
+  }
   const basketIdent = cookies().get("basketIdent")?.value;
-  console.log(basketIdent);
   const url = `${baseURL}/api/accounts/${process.env.WEBSTORE_IDENT}/baskets/${basketIdent}`;
 
   const options: FetchOptions = {
@@ -195,4 +209,16 @@ export async function authedBasket(): Promise<Boolean | User> {
 
     return user;
   }
+}
+// async function deleteBasket(): Promise<boolean> {}
+
+export async function logOut(): Promise<void> {
+  // clear cookie
+  cookies().delete("basketIdent");
+
+  // delete basket
+  // do we need to?
+
+  // redirect back
+  redirect("/", RedirectType.replace);
 }
